@@ -1,6 +1,8 @@
 from django.conf import settings
 
 ZTASKD_URL = getattr(settings, 'ZTASKD_URL', 'tcp://127.0.0.1:5555')
+ZTASK_WORKER_URL = getattr(settings, 'ZTASK_WORKER_URL', 'tcp://127.0.0.1:5556')
+
 ZTASKD_RETRY_COUNT = getattr(settings, 'ZTASKD_RETRY_COUNT', 5)
 ZTASKD_RETRY_AFTER = getattr(settings, 'ZTASKD_RETRY_AFTER', 5)
 
