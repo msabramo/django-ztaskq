@@ -1,5 +1,9 @@
-import datetime, time
 
+import sys
+import traceback
+
+import pickle
+import datetime, time
 from django_ztask.conf import settings, logger
 
 from django_ztask.models import Task
@@ -24,7 +28,7 @@ def _get_next_task():
     # use a zmq queue instead of the database for the work pipeline
 
 _func_cache = {}
-def _execute_task(task_id):
+def execute_task(task_id):
     
     try:
         task = Task.objects.get(pk=task_id)

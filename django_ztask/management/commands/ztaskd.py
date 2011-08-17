@@ -77,9 +77,12 @@ def _recv_and_enqueue(server_socket, worker_socket):
             retry_count=settings.ZTASKD_RETRY_COUNT,
             next_attempt=time.time() + retry_wait_time
         )
-        logger.info('Listed task in django database (%s)' % function_name)
-        worker_socket.send_pyobj((task.pk,))
-        logger.info('Passed task to worker queue (%s)' % function_name)
+        logger.info('Listed task in django database (%r)' % task.pk)
+        # TODO: need to make the send below async so that work can be 
+        #   recorded in the queue even if workers aren't present to recv
+        worker_socket.send_pyobj((str(task.pk),))
+        logger.info('Passed task to worker queue (%r)' % task.pk)
+        
         
     except Exception, e:
         logger.error('Error setting up function. Details:\n%s' % e)
