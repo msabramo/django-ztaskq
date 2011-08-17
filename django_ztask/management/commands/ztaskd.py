@@ -70,8 +70,10 @@ def _recv_and_enqueue(server_socket, worker_socket):
         
         task = Task.objects.create(
             function_name=function_name, 
+            
             args=pickle.dumps(args), 
             kwargs=pickle.dumps(kwargs), 
+            
             retry_count=settings.ZTASKD_RETRY_COUNT,
             next_attempt=time.time() + retry_wait_time
         )
