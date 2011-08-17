@@ -1,12 +1,12 @@
-from django.core.management.base import BaseCommand
-from django.utils import autoreload
-
-from django_ztask.models import Task
-
-from django_ztask.conf import settings, logger
-from django_ztask.context import shared_context as context
+import sys
+import traceback
+import pickle
+import datetime, time
+from threading import Thread
+from optparse import make_option
 
 import zmq
+from zmq.core.device import device
 try:
     from zmq import PUSH
 except:
@@ -16,12 +16,41 @@ try:
 except:
     from zmq import UPSTREAM as PULL
 
-from optparse import make_option
-import sys
-import traceback
+from django.core.management.base import BaseCommand
+from django.utils import autoreload
 
-import pickle
-import datetime, time
+from django_ztask.models import Task
+from django_ztask.conf import settings, logger
+from django_ztask.context import shared_context as context
+
+class DeviceType(object):
+    QUEUE, FORWARDER, STREAMER = range(3)
+
+def _async_queue():
+    """Handles the blocking messaging for the worker queue."""
+    logger.info('Async queue thread is running.')
+    queue_socket = context.socket(PULL)
+    queue_socket.connect(settings.ZTASK_INTERNAL_QUEUE_URL)
+    
+    worker_socket = context.socket(PUSH)
+    worker_socket.bind(settings.ZTASK_WORKER_URL)
+    
+    d = device(DeviceType.STREAMER, 
+        queue_socket, worker_socket)
+
+def _serve():
+    """Handles immediate logging of tasks in the Django model."""
+    logger.info('Server thread is running.')
+    
+    server_socket = context.socket(PULL)
+    server_socket.bind(settings.ZTASKD_URL)
+    
+    queue_socket = context.socket(PUSH)
+    queue_socket.bind(settings.ZTASK_INTERNAL_QUEUE_URL)
+    
+    while True:
+        _recv_and_enqueue(server_socket, queue_socket)
+
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
@@ -47,15 +76,12 @@ class Command(BaseCommand):
         logger.info("%sServer starting on %s." % ('Development ' if use_reloader else '', settings.ZTASKD_URL))
         _on_load()
         
-        server_socket = context.socket(PULL)
-        server_socket.bind(settings.ZTASKD_URL)
+        # TODO: how should these threads be killed when reloaded
+        queue_thread = Thread(target=_async_queue)
+        queue_thread.start()
         
-        worker_socket = context.socket(PUSH)
-        worker_socket.bind(settings.ZTASK_WORKER_URL)
-        
-        while True:
-            _recv_and_enqueue(server_socket, worker_socket)
-        
+        serve_thread = Thread(target=_serve)
+        serve_thread.start()
     
 
 def _recv_and_enqueue(server_socket, worker_socket):
