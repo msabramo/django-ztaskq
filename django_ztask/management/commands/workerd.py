@@ -19,8 +19,6 @@ import traceback
 import pickle
 import datetime, time
 
-from django_ztask.deprecated import execute_task
-
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--noreload', 
@@ -47,6 +45,7 @@ class Command(BaseCommand):
         while True:
             task_id, = socket.recv_pyobj()
             logger.info('Worker received task (%s)' % (str(task_id),))
-            execute_task(task_id)
+            task = Task.objects.get(pk=task_id)
+            task.run()
         
     

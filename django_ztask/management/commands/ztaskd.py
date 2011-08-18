@@ -88,7 +88,6 @@ def _recv_and_enqueue(server_socket, worker_socket):
     try:
         
         function_name, args, kwargs = server_socket.recv_pyobj()
-        retry_wait_time = 5000 # 5 seconds
         
         if function_name == 'ztask_log':
             logger.warn('%s: %s' % (args[0], args[1]))
@@ -96,12 +95,8 @@ def _recv_and_enqueue(server_socket, worker_socket):
         
         task = Task.objects.create(
             function_name=function_name, 
-            
             args=pickle.dumps(args), 
             kwargs=pickle.dumps(kwargs), 
-            
-            retry_count=settings.ZTASKD_RETRY_COUNT,
-            next_attempt=time.time() + retry_wait_time
         )
         logger.info('Listed task in django database (%r)' % task.pk)
         # TODO: need to make the send below async so that work can be 

@@ -1,18 +1,9 @@
-IMPORTANT: READ ME
-==================
+Notes about this fork
+=====================
 
-In version 0.1.4, we are introducing two major changes:
+TODO
 
-1. Tasks now have a `created` datetime field. This was added to make sure `--replayfailed` replayed tasks in the appropriate order
-2. Introduced [South](http://south.aeracode.org/) migrations.
 
-IF YOU HAVE ALREADY INSTALLED `django-ztask` - you can "fake" the first migration, and then run the second migration:
-
-    ./manage.py migrate django_ztask --fake 0001
-    ./manage.py migrate django_ztask
-    
-If you are not using [South](http://south.aeracode.org/) in your Django project, it is strongly recommended you do. If you
-are not, you will have to add the "created" field to your database manually.
 
 Installing
 ==========
