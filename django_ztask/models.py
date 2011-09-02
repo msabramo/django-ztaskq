@@ -4,6 +4,7 @@ import time
 import sys
 import traceback
 import pickle
+import json
 
 from django_jsonfield import JSONField # probably should just make it PICKLE FIELD along with args and kwargs
 from django.db.models import *
@@ -32,7 +33,7 @@ class Task(Model):
     function_name = CharField(max_length=255)
     args = TextField()
     kwargs = TextField()
-    return_value = JSONField(blank=True, null=True)
+    return_value = TextField()
     
     error = TextField(blank=True, null=True)
     
@@ -98,6 +99,14 @@ class Task(Model):
         """TODO: ditto with get_args()"""
         return pickle.loads(str(self.kwargs))
     
+    def get_return_value(self):
+        """TODO: ditto with get_args()"""
+        print 'Task.return_value = "%r"' % self.return_value
+        try:
+            return pickle.loads(str(self.return_value))
+        except:
+            raise ValueError('Not ready yet!')
+    
     def run(self):
         
         function_name = self.function_name
@@ -119,12 +128,17 @@ class Task(Model):
             _func_cache[function_name] = function
         
         try:
+            print 'Task.run is calling %r(%r, %r)' % (function, args, kwargs)
             return_value = function(*args, **kwargs)
+            logger.info('Successfully finished the function call.')
         except Exception, e:
-            self.mark_complete(success=False, error_msg=str(e))
-            logger.error('Error calling %s. Details:\n%s' % (function_name, e))
+            print e
+            traceback = sys.last_traceback if hasattr(sys, 'last_traceback') else 'no traceback available'
+            self.mark_complete(success=False, error_msg=traceback)
+            logger.error('Error calling %s. Details:\n%s' % (function_name, traceback))
+            raise
         else:
-            self.return_value = return_value
+            self.return_value = pickle.dumps(return_value)
             self.save()
             self.mark_complete(success=True)
             logger.info('Called %s successfully' % function_name)
