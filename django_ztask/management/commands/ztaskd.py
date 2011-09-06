@@ -95,8 +95,10 @@ def _recv_and_enqueue(server_socket, worker_socket):
         
         task = Task.objects.create(
             function_name=function_name, 
-            args=pickle.dumps(args), 
-            kwargs=pickle.dumps(kwargs), 
+            # args=pickle.dumps(args), 
+            # kwargs=pickle.dumps(kwargs), 
+            args=args,
+            kwargs=kwargs,
         )
         logger.info('Listed task in django database (%r)' % task.pk)
         # TODO: need to make the send below async so that work can be 
