@@ -1,7 +1,7 @@
 Notes about this fork
 =====================
 
-Django ZTaskQ is a 0MQ-based asynchronous task queue that is based upon a fork of the 
+Django ZTaskQ is a 0MQ-based [http://www.zeromq.org/] asynchronous task queue that is based upon a fork of the 
 delightfully straight-forward django-ztask by Jason Allum and Dave Martorana (read more 
 about how django-ztask from [http://www.zeromq.org/story:3]).
 
