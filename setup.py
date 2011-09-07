@@ -12,8 +12,8 @@ setup(
     author_email=distmeta.__contact__,
     url=distmeta.__homepage__,
     #
-    name='django-ztask',
-    packages=['django_ztask'],
+    name='django-ztaskq',
+    packages=['django_ztaskq'],
     install_requires=[
         'pyzmq',
     ]
