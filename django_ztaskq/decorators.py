@@ -4,8 +4,9 @@ from functools import wraps
 import logging
 import types
 
+
 def task():
-    from django_ztask.conf import settings
+    from .conf import settings
     try:
         from zmq import PUSH
     except:
@@ -17,7 +18,7 @@ def task():
         logger = logging.getLogger('ztaskd')
         logger.info('Registered task: %s' % function_name)
         
-        from django_ztask.context import shared_context as context
+        from .context import shared_context as context
         socket = context.socket(PUSH)
         socket.connect(settings.ZTASKD_URL)
         

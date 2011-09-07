@@ -9,7 +9,7 @@ import json
 from picklefield import PickledObjectField
 from django.db.models import *
 
-from django_ztask.conf import settings, logger
+from .conf import settings, logger
 
 class Status(object):
     """Enum-style class of possible task statuses."""
@@ -51,7 +51,7 @@ class Task(Model):
         super(Task, self).save(*args, **kwargs)
     
     class Meta:
-        db_table = 'django_ztask_task'
+        db_table = 'django_ztaskq_task'
     
     @classmethod
     def run_task(cls, task_id):

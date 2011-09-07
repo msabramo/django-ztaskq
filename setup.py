@@ -3,7 +3,7 @@ try:
     from setuptools import setup
 except:
     from distutils.core import setup
-import django_ztask as distmeta
+import django_ztaskq as distmeta
 
 setup(
     version=distmeta.__version__,

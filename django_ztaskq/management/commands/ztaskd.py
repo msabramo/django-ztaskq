@@ -19,9 +19,9 @@ except:
 from django.core.management.base import BaseCommand
 from django.utils import autoreload
 
-from django_ztask.models import Task
-from django_ztask.conf import settings, logger
-from django_ztask.context import shared_context as context
+from ...models import Task
+from ...conf import settings, logger
+from ...context import shared_context as context
 
 class DeviceType(object):
     QUEUE, FORWARDER, STREAMER = range(3)
