@@ -101,7 +101,7 @@ def _recv_and_enqueue(server_socket, worker_socket):
             worker_socket.send_pyobj((str(task.pk),))
             logger.info('Passed task to worker queue (%r)' % task.pk)
         else:
-            logger.info('Ignoring task (%r) because it is already computed.')
+            logger.info('Ignoring task (%r) because it is already computed.' % task.pk)
         
         
     except Exception, e:
