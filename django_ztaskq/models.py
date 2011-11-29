@@ -106,11 +106,11 @@ class Task(Model):
             _func_cache[function_name] = function
         
         try:
-            print 'Task.run is calling %r(%r, %r)' % (function, args, kwargs)
+            logger.info('Task.run is calling %r(%r, %r)' % (function, args, kwargs))
             return_value = function(*args, **kwargs)
             logger.info('Successfully finished the function call.')
         except Exception, e:
-            print e
+            logger.error('Unhandled error: %r' % (e,))
             traceback = sys.last_traceback if hasattr(sys, 'last_traceback') else 'no traceback available'
             self.mark_complete(success=False, error_msg=traceback)
             logger.error('Error calling %s. Details:\n%s' % (function_name, traceback))
