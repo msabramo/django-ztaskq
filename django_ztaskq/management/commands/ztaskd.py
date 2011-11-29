@@ -87,24 +87,21 @@ class Command(BaseCommand):
 def _recv_and_enqueue(server_socket, worker_socket):
     try:
         
-        function_name, args, kwargs = server_socket.recv_pyobj()
+        taskid, function_name, args, kwargs = server_socket.recv_pyobj()
         
-        if function_name == 'ztask_log':
-            logger.warn('%s: %s' % (args[0], args[1]))
-            return
-        
-        task = Task.objects.create(
+        task, was_created = Task.objects.get_or_create(
+            taskid=taskid,
             function_name=function_name, 
-            # args=pickle.dumps(args), 
-            # kwargs=pickle.dumps(kwargs), 
             args=args,
             kwargs=kwargs,
         )
         logger.info('Listed task in django database (%r)' % task.pk)
-        # TODO: need to make the send below async so that work can be 
-        #   recorded in the queue even if workers aren't present to recv
-        worker_socket.send_pyobj((str(task.pk),))
-        logger.info('Passed task to worker queue (%r)' % task.pk)
+        
+        if was_created:
+            worker_socket.send_pyobj((str(task.pk),))
+            logger.info('Passed task to worker queue (%r)' % task.pk)
+        else:
+            logger.info('Ignoring task (%r) because it is already computed.')
         
         
     except Exception, e:

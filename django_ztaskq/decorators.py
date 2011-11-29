@@ -1,11 +1,17 @@
-from django.utils.decorators import available_attrs
-from functools import wraps
-
+import uuid
 import logging
 import types
+from functools import wraps
 
-
-def task():
+def task(memoize=False):
+    """Decorator to augment function (task) with async computation ability.
+    
+    :param memoize: should function calls with the same args be memoized?
+    :type memoize: bool
+    
+    The memoize flag allows functions to be marked 
+    
+    """
     from .conf import settings
     try:
         from zmq import PUSH
@@ -25,13 +31,20 @@ def task():
         @wraps(func)
         def _async(*args, **kwargs):
             # pop the key and ignore it
-            after = kwargs.pop('__ztask_after', 0)
+            after = kwargs.pop('__ztask_after', 0) # TODO: can remove now?
+            
+            if memoize: # same func and args will have same taskid
+                taskid = str(uuid.uuid5(uuid.NAMESPACE_URL, 
+                    '%r-%r-%r' % (function_name, args, kwargs)))
+            else: # give a random unique id regardless of input (almost certainly unique)
+                taskid = str(uuid.uuid4())
             
             try:
-                socket.send_pyobj((function_name, args, kwargs))
+                socket.send_pyobj((taskid, function_name, args, kwargs))
             except Exception, e:
                 logger.error('Failed to submit task to ztaskd: '
                     '%s(args=%r, kwargs=%r)' % (function_name, args, kwargs))
+            return taskid
         
         setattr(func, 'async', _async)
         return func

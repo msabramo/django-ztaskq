@@ -1,4 +1,3 @@
-import uuid
 import datetime
 import time
 import sys
@@ -28,7 +27,7 @@ STATUS_CHOICES = (
 
 _func_cache = {} # could be a classwide "static" member (may have to override __new__)
 class Task(Model):
-    uuid = CharField(max_length=36, primary_key=True)
+    taskid = CharField(max_length=36, primary_key=True)
     
     function_name = CharField(max_length=255)
     args = PickledObjectField()
@@ -45,9 +44,8 @@ class Task(Model):
         default=Status.QUEUED)
     
     def save(self, *args, **kwargs):
-        if not self.uuid:
+        if not self.queued:
             self.queued = datetime.datetime.utcnow()
-            self.uuid = str(uuid.uuid4())
         super(Task, self).save(*args, **kwargs)
     
     class Meta:
