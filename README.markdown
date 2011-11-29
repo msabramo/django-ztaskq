@@ -114,12 +114,12 @@ When the file is imported, `ztaskd` will register the task for running.
 
 ([Read more about pickling here](http://docs.python.org/tutorial/inputoutput.html#the-pickle-module))
 
-The @task Decorator
+The @ztask Decorator
 -------------------
 
-    from django_ztaskq.decorators import task
+    from django_ztaskq.decorators import ztask
 
-The `@task()` decorator will turn any normal function in to a 
+The `@ztask()` decorator will turn any normal function in to a 
 `django_ztaskq` task if called using one of the function extensions.
 
 Function extensions
@@ -133,16 +133,16 @@ Any function can be called in one of three ways:
 
 - `func.async(*args, **kwargs)`
 
-  Calling a function with `.async` will cause the function task to be called asyncronously 
+  Calling a function with `.async` will cause the function task to be called asynchronously 
   on the ztaskd server. 
 
 
 Example
 -------
 
-    from django_ztaskq.decorators import task
+    from django_ztaskq.decorators import ztask
     
-    @task()
+    @ztask()
     def print_this(what_to_print):
         print what_to_print
         
