@@ -3,7 +3,7 @@ import logging
 import types
 from functools import wraps
 
-def task(memoize=False):
+def ztask(memoize=False):
     """Decorator to augment function (task) with async computation ability.
     
     :param memoize: should function calls with the same args be memoized?
@@ -30,9 +30,7 @@ def task(memoize=False):
         
         @wraps(func)
         def _async(*args, **kwargs):
-            # pop the key and ignore it
-            after = kwargs.pop('__ztask_after', 0) # TODO: can remove now?
-            
+            """Call the function asynchronously by placing it in a task queue."""
             if memoize: # same func and args will have same taskid
                 taskid = str(uuid.uuid5(uuid.NAMESPACE_URL, 
                     '%r-%r-%r' % (function_name, args, kwargs)))
