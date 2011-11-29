@@ -110,7 +110,6 @@ class Task(Model):
             return_value = function(*args, **kwargs)
             logger.info('Successfully finished the function call.')
         except Exception, e:
-            logger.error('Unhandled error: %r' % (e,))
             traceback = sys.last_traceback if hasattr(sys, 'last_traceback') else 'no traceback available'
             self.mark_complete(success=False, error_msg=traceback)
             logger.error('Error calling %s. Details:\n%s' % (function_name, traceback))
