@@ -32,7 +32,7 @@ class Task(Model):
     function_name = CharField(max_length=255)
     args = PickledObjectField()
     kwargs = PickledObjectField()
-    return_value = PickledObjectField()
+    return_value = PickledObjectField(null=True)
     
     error = TextField(blank=True, null=True)
     
