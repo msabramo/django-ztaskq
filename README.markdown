@@ -74,11 +74,15 @@ Settings
 There are several settings that you can put in your `settings.py` file in 
 your Django project. These are the settings and their defaults
 
-    ZTASKD_URL = 'tcp://127.0.0.1:5555'
+```python
+ZTASKD_URL = 'tcp://127.0.0.1:5555'
+```
 
 By default, `ztaskd` will run over TCP, listening on 127.0.0.1 port 5555. 
 
-    ZTASK_WORKER_URL = getattr(settings, 'ZTASK_WORKER_URL', 'tcp://127.0.0.1:5556')
+```python
+ZTASK_WORKER_URL = getattr(settings, 'ZTASK_WORKER_URL', 'tcp://127.0.0.1:5556')
+```
 
 By default, all `workerd` instances will listen on 127.0.0.1 port 5556.
 
@@ -88,18 +92,21 @@ Running in production
 A recommended way to run in production would be to put something similar to 
 the following in to your `rc.local` file:
 
-    #!/bin/bash -e
-    pushd /var/www/path/to/site
-    sudo -u www-data python manage.py ztaskd --noreload -f /var/log/ztaskd.log &
-    popd
+```bash
+#!/bin/bash -e
+
+pushd /var/www/path/to/site
+sudo -u www-data python manage.py ztaskd --noreload -f /var/log/ztaskd.log &
+popd
     
-    pushd /var/www/path/to/site
-    sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd0.log &
-    popd
+pushd /var/www/path/to/site
+sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd0.log &
+popd
     
-    pushd /var/www/path/to/site
-    sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd1.log &
-    popd
+pushd /var/www/path/to/site
+sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd1.log &
+popd
+```
 
 The commands above will start the ztask queue in addition to 2 worker processes.
 
@@ -117,7 +124,9 @@ When the file is imported, `ztaskd` will register the task for running.
 The @ztask Decorator
 -------------------
 
-    from django_ztaskq.decorators import ztask
+```python
+from django_ztaskq.decorators import ztask
+```
 
 The `@ztask()` decorator will turn any normal function in to a 
 `django_ztaskq` task if called using one of the function extensions.
@@ -140,18 +149,18 @@ Any function can be called in one of three ways:
 Example
 -------
 
-    from django_ztaskq.decorators import ztask
+```python
+from django_ztaskq.decorators import ztask
     
-    @ztask()
-    def print_this(what_to_print):
-        print what_to_print
+@ztask()
+def print_this(what_to_print):
+    print what_to_print
         
-    if __name__ == '__main__':
+if __name__ == '__main__':
+    # Call the function directly
+    print_this('Hello world!')
         
-        # Call the function directly
-        print_this('Hello world!')
-        
-        # Call the function asynchronously
-        print_this.async('This will print to the ztaskd log')
-        
+    # Call the function asynchronously
+    print_this.async('This will print to the ztaskd log')
+```
         
