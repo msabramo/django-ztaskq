@@ -14,17 +14,19 @@ Installing
 
 Download and install 0MQ version 2.1.3 or better from [http://www.zeromq.org](http://www.zeromq.org)
 
-Install pyzmq and django-ztask using PIP:
+Install pyzmq and django-ztaskq using PIP:
 
     pip install pyzmq
-    pip install -e git+git@github.com:awesomo/django-ztask.git#egg=django_ztaskq
+    pip install -e git+git@github.com:awesomo/django-ztaskq.git#egg=django_ztaskq
 
 Add `django_ztaskq` to your `INSTALLED_APPS` setting in `settings.py`
 
+```python
     INSTALLED_APPS = (
         ...,
         'django_ztaskq',
     )
+```
 
 Then run `syncdb`
 
