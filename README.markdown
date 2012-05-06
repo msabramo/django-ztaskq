@@ -93,18 +93,19 @@ A recommended way to run in production would be to put something similar to
 the following in to your `rc.local` file:
 
 ```bash
-    #!/bin/bash -e
-    pushd /var/www/path/to/site
-    sudo -u www-data python manage.py ztaskd --noreload -f /var/log/ztaskd.log &
-    popd
+#!/bin/bash -e
+
+pushd /var/www/path/to/site
+sudo -u www-data python manage.py ztaskd --noreload -f /var/log/ztaskd.log &
+popd
     
-    pushd /var/www/path/to/site
-    sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd0.log &
-    popd
+pushd /var/www/path/to/site
+sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd0.log &
+popd
     
-    pushd /var/www/path/to/site
-    sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd1.log &
-    popd
+pushd /var/www/path/to/site
+sudo -u www-data python manage.py workerd --noreload -f /var/log/workerd1.log &
+popd
 ```
 
 The commands above will start the ztask queue in addition to 2 worker processes.
@@ -149,18 +150,17 @@ Example
 -------
 
 ```python
-    from django_ztaskq.decorators import ztask
+from django_ztaskq.decorators import ztask
     
-    @ztask()
-    def print_this(what_to_print):
-        print what_to_print
+@ztask()
+def print_this(what_to_print):
+    print what_to_print
         
-    if __name__ == '__main__':
+if __name__ == '__main__':
+    # Call the function directly
+    print_this('Hello world!')
         
-        # Call the function directly
-        print_this('Hello world!')
-        
-        # Call the function asynchronously
-        print_this.async('This will print to the ztaskd log')
+    # Call the function asynchronously
+    print_this.async('This will print to the ztaskd log')
 ```
         
