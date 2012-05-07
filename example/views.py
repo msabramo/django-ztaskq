@@ -21,5 +21,6 @@ def launch_ztask(request):
 
 @ztask()
 def log_message():
+    print("This is a message logged from a ztaskq workerd process: pid %d\n" % os.getpid())
     open(os.path.join(logs_dir, "workerd.log"), "w").write(
         "This is a message logged from a ztaskq workerd process: pid %d\n" % os.getpid())
