@@ -14,7 +14,7 @@ setup(
     #
     name='django-ztaskq',
     packages=['django_ztaskq'],
-    tests_require=['unittest2'],
+    tests_require=['unittest2', 'Django==1.3.1'],
     test_suite='unittest2.collector',
     install_requires=[
         'django-picklefield',
